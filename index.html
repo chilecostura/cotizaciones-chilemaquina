@@ -256,6 +256,13 @@
   var form = document.getElementById("form-cotizacion");
   var aviso = document.getElementById("aviso-error");
 
+  var params = new URLSearchParams(window.location.search);
+  var ORIGEN = (params.get("origen") || "directo").slice(0, 40);
+  var productoURL = (params.get("producto") || "").slice(0, 120);
+  if (productoURL) {
+    document.getElementById("modelo").value = productoURL;
+  }
+
   form.addEventListener("submit", function(ev){
     ev.preventDefault();
 
@@ -284,6 +291,7 @@
     lineas.push("🔢 Cantidad: " + cantidad);
     lineas.push("📍 Región: " + region);
     if(uso) lineas.push("📝 Uso previsto: " + uso);
+    lineas.push("📊 Origen: " + ORIGEN);
 
     var url = "https://wa.me/" + NUMERO_WSP + "?text=" + encodeURIComponent(lineas.join("\n"));
     window.open(url, "_blank", "noopener");
