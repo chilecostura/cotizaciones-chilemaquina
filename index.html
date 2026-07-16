@@ -284,14 +284,14 @@
     var lineas = [];
     lineas.push("*SOLICITUD DE COTIZACIÓN* — cotizaciones.chilemaquina.pro");
     lineas.push("");
-    lineas.push("👤 Nombre: " + nombre);
-    if(empresa) lineas.push("🏢 Empresa/taller: " + empresa);
-    lineas.push("🧵 Producto: " + tipo);
-    if(modelo) lineas.push("🔧 Marca/modelo: " + modelo);
-    lineas.push("🔢 Cantidad: " + cantidad);
-    lineas.push("📍 Región: " + region);
-    if(uso) lineas.push("📝 Uso previsto: " + uso);
-    lineas.push("📊 Origen: " + ORIGEN);
+    lineas.push("*Nombre:* " + nombre);
+    if(empresa) lineas.push("*Empresa/taller:* " + empresa);
+    lineas.push("*Producto:* " + tipo);
+    if(modelo) lineas.push("*Marca/modelo:* " + modelo);
+    lineas.push("*Cantidad:* " + cantidad);
+    lineas.push("*Región:* " + region);
+    if(uso) lineas.push("*Uso previsto:* " + uso);
+    lineas.push("*Origen:* " + ORIGEN);
 
     var url = "https://wa.me/" + NUMERO_WSP + "?text=" + encodeURIComponent(lineas.join("\n"));
     window.open(url, "_blank", "noopener");
