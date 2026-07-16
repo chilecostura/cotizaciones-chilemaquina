@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicita tu Cotización | ChileMáquina · Chilecostura</title>
+<meta name="description" content="Solicita una cotización de máquinas de coser industriales, overlock, bordadoras, cortadoras y más. Respuesta directa por WhatsApp del equipo técnico ChileMáquina.">
+<link rel="canonical" href="https://cotizaciones.chilemaquina.pro/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0f2742;
+    --blue:#1a4b8c;
+    --sky:#2e7bc4;
+    --hilo:#e8b53a;
+    --paper:#f6f4ef;
+    --ink:#22303f;
+    --muted:#5b6b7c;
+    --wsp:#25D366;
+    --error:#c2410c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Archivo",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+  }
+  /* ===== Puntada ===== */
+  .puntada{
+    height:0;border-top:3px dashed var(--hilo);
+    max-width:760px;margin:0 auto;position:relative;
+  }
+  .puntada::after{
+    content:"";position:absolute;right:-4px;top:-7px;
+    width:11px;height:11px;border-radius:50%;background:var(--hilo);
+  }
+  /* ===== Header ===== */
+  header{background:var(--navy);color:#fff;padding:18px 20px}
+  .header-inner{
+    max-width:760px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .marca{
+    font-weight:900;font-variation-settings:"wdth" 118;
+    font-size:19px;letter-spacing:0.02em;text-transform:uppercase;
+  }
+  .marca span{color:var(--hilo)}
+  .header-links{display:flex;gap:18px;font-size:13.5px}
+  .header-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:600}
+  .header-links a:hover,.header-links a:focus-visible{color:#fff;text-decoration:underline}
+  /* ===== Hero ===== */
+  .hero{
+    background:linear-gradient(150deg,var(--navy) 0%,var(--blue) 100%);
+    color:#fff;padding:52px 20px 58px;text-align:center;
+  }
+  .hero .eyebrow{
+    display:inline-block;font-size:11px;font-weight:800;
+    letter-spacing:0.16em;text-transform:uppercase;color:var(--hilo);margin-bottom:14px;
+  }
+  .hero h1{
+    font-size:clamp(27px,5.5vw,42px);font-weight:900;
+    font-variation-settings:"wdth" 116;text-transform:uppercase;
+    line-height:1.08;max-width:640px;margin:0 auto 14px;
+  }
+  .hero h1 .subrayado{
+    background-image:linear-gradient(to right,var(--hilo) 60%,transparent 40%);
+    background-size:14px 3px;background-repeat:repeat-x;background-position:0 96%;
+    padding-bottom:6px;
+  }
+  .hero p{font-size:15.5px;color:rgba(255,255,255,0.82);max-width:520px;margin:0 auto}
+  /* ===== Formulario ===== */
+  main{max-width:760px;margin:0 auto;padding:44px 20px 30px}
+  form{
+    background:#fff;border:1px solid #e3ded2;border-radius:16px;
+    padding:32px 28px 36px;
+  }
+  .campo{margin-bottom:22px}
+  label{
+    display:block;font-size:13px;font-weight:800;
+    text-transform:uppercase;letter-spacing:0.05em;
+    color:var(--navy);margin-bottom:7px;
+  }
+  label .req{color:var(--error)}
+  label .opcional{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)}
+  input[type=text],input[type=tel],input[type=email],select,textarea{
+    width:100%;
+    font-family:inherit;font-size:15px;color:var(--ink);
+    background:var(--paper);
+    border:1.5px solid #d8d2c2;border-radius:10px;
+    padding:13px 15px;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:3px solid var(--hilo);outline-offset:1px;border-color:var(--navy);
+  }
+  textarea{resize:vertical;min-height:96px}
+  .fila{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:560px){.fila{grid-template-columns:1fr}}
+  .aviso-error{
+    display:none;
+    background:#fff3ea;border-left:4px solid var(--error);
+    border-radius:0 10px 10px 0;
+    padding:12px 16px;font-size:13.5px;color:#7c2d12;margin-bottom:20px;
+  }
+  .aviso-error.visible{display:block}
+  .btn-wsp{
+    display:block;width:100%;
+    background:var(--wsp);color:#fff;
+    font-family:inherit;font-weight:900;font-size:16px;
+    font-variation-settings:"wdth" 106;
+    border:none;border-radius:100px;
+    padding:16px 30px;cursor:pointer;
+    transition:filter .15s ease;
+  }
+  .btn-wsp:hover,.btn-wsp:focus-visible{filter:brightness(1.06)}
+  .btn-wsp:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
+  .nota-envio{
+    text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px;
+  }
+  /* ===== Franja alternativa ===== */
+  .alternativa{max-width:760px;margin:34px auto 60px;padding:0 20px;text-align:center}
+  .alternativa p{font-size:14px;color:var(--muted)}
+  .alternativa a{color:var(--blue);font-weight:800;text-decoration:none}
+  .alternativa a:hover,.alternativa a:focus-visible{text-decoration:underline}
+  /* ===== Footer ===== */
+  footer{
+    background:var(--navy);color:rgba(255,255,255,0.7);
+    text-align:center;padding:26px 20px 30px;
+    font-size:12.5px;line-height:1.8;
+  }
+  footer a{color:var(--hilo);text-decoration:none;font-weight:700}
+  footer a:hover,footer a:focus-visible{text-decoration:underline}
+  a:focus-visible{outline:3px solid var(--hilo);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="marca">Chile<span>Máquina</span></div>
+    <nav class="header-links" aria-label="Enlaces principales">
+      <a href="https://chilemaquina.pro">Ir a la tienda</a>
+      <a href="https://catalogos.chilemaquina.pro">Catálogos</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="eyebrow">Cotizaciones · Respuesta por WhatsApp</span>
+  <h1>Cuéntanos qué necesitas,<br><span class="subrayado">nosotros cotizamos</span></h1>
+  <p>Completa el formulario y tu solicitud llega directo a nuestro equipo técnico por WhatsApp. Más de 35 años asesorando talleres y empresas de confección en Chile.</p>
+</section>
+
+<main>
+  <form id="form-cotizacion" novalidate>
+    <div class="aviso-error" id="aviso-error" role="alert">
+      Completa los campos marcados con <strong>*</strong> para poder enviar tu solicitud.
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="nombre">Nombre <span class="req">*</span></label>
+        <input type="text" id="nombre" name="nombre" autocomplete="name" required>
+      </div>
+      <div class="campo">
+        <label for="empresa">Empresa o taller <span class="opcional">(opcional)</span></label>
+        <input type="text" id="empresa" name="empresa" autocomplete="organization">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="tipo">¿Qué máquina o producto necesitas? <span class="req">*</span></label>
+      <select id="tipo" name="tipo" required>
+        <option value="">Selecciona una categoría…</option>
+        <option>Máquina recta industrial</option>
+        <option>Overlock industrial</option>
+        <option>Overlock / máquina de coser doméstica</option>
+        <option>Colleretera / tapacostura</option>
+        <option>Bordadora doméstica</option>
+        <option>Bordadora industrial / multi-cabezal</option>
+        <option>Cortadora de tela</option>
+        <option>Plancha o equipo de planchado</option>
+        <option>Estampadora / sublimadora</option>
+        <option>Máquina de tejer</option>
+        <option>Máquina para cuero y calzado</option>
+        <option>Cerradora de sacos</option>
+        <option>Máquina de especialidad</option>
+        <option>Repuestos o accesorios</option>
+        <option>Importación directa a pedido</option>
+        <option>Otro / no estoy seguro</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="modelo">Marca o modelo de interés <span class="opcional">(opcional — ej: Juki DDL-8000A, Siruba, BSQ)</span></label>
+      <input type="text" id="modelo" name="modelo">
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="cantidad">Cantidad <span class="req">*</span></label>
+        <input type="text" id="cantidad" name="cantidad" inputmode="numeric" placeholder="Ej: 1" required>
+      </div>
+      <div class="campo">
+        <label for="region">Región de despacho <span class="req">*</span></label>
+        <select id="region" name="region" required>
+          <option value="">Selecciona tu región…</option>
+          <option>Arica y Parinacota</option>
+          <option>Tarapacá</option>
+          <option>Antofagasta</option>
+          <option>Atacama</option>
+          <option>Coquimbo</option>
+          <option>Valparaíso</option>
+          <option>Metropolitana</option>
+          <option>O'Higgins</option>
+          <option>Maule</option>
+          <option>Ñuble</option>
+          <option>Biobío</option>
+          <option>La Araucanía</option>
+          <option>Los Ríos</option>
+          <option>Los Lagos</option>
+          <option>Aysén</option>
+          <option>Magallanes</option>
+          <option>Retiro en tienda (Santiago / Valparaíso)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="uso">¿Para qué la usarás? <span class="opcional">(opcional — nos ayuda a recomendarte la máquina correcta)</span></label>
+      <textarea id="uso" name="uso" placeholder="Ej: confección de ropa deportiva, taller con 3 operarias, tela stretch…"></textarea>
+    </div>
+
+    <button type="submit" class="btn-wsp">💬 Enviar solicitud por WhatsApp</button>
+    <p class="nota-envio">Al presionar el botón se abrirá WhatsApp con tu solicitud lista para enviar. Sin registro, sin spam.</p>
+  </form>
+</main>
+
+<div class="puntada" role="presentation"></div>
+
+<section class="alternativa">
+  <p>¿Prefieres cotizar conversando? Escríbenos directo al <a href="https://wa.me/56945494865?text=Hola%2C%20quiero%20cotizar%20una%20m%C3%A1quina">WhatsApp de ventas</a> o visita nuestras tiendas en Santiago y Valparaíso.</p>
+</section>
+
+<footer>
+  ChileMáquina · Chilecostura — Carolita SpA<br>
+  Concón, Valparaíso · Santiago, RM · <a href="https://chilemaquina.pro">chilemaquina.pro</a><br>
+  35+ años acompañando la confección chilena.
+</footer>
+
+<script>
+(function(){
+  var NUMERO_WSP = "56945494865";
+  var form = document.getElementById("form-cotizacion");
+  var aviso = document.getElementById("aviso-error");
+
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+
+    var nombre   = document.getElementById("nombre").value.trim();
+    var empresa  = document.getElementById("empresa").value.trim();
+    var tipo     = document.getElementById("tipo").value;
+    var modelo   = document.getElementById("modelo").value.trim();
+    var cantidad = document.getElementById("cantidad").value.trim();
+    var region   = document.getElementById("region").value;
+    var uso      = document.getElementById("uso").value.trim();
+
+    if(!nombre || !tipo || !cantidad || !region){
+      aviso.classList.add("visible");
+      aviso.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+    aviso.classList.remove("visible");
+
+    var lineas = [];
+    lineas.push("*SOLICITUD DE COTIZACIÓN* — cotizaciones.chilemaquina.pro");
+    lineas.push("");
+    lineas.push("👤 Nombre: " + nombre);
+    if(empresa) lineas.push("🏢 Empresa/taller: " + empresa);
+    lineas.push("🧵 Producto: " + tipo);
+    if(modelo) lineas.push("🔧 Marca/modelo: " + modelo);
+    lineas.push("🔢 Cantidad: " + cantidad);
+    lineas.push("📍 Región: " + region);
+    if(uso) lineas.push("📝 Uso previsto: " + uso);
+
+    var url = "https://wa.me/" + NUMERO_WSP + "?text=" + encodeURIComponent(lineas.join("\n"));
+    window.open(url, "_blank", "noopener");
+  });
+})();
+</script>
+
+</body>
+</html>
