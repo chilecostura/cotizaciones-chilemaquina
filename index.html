@@ -203,6 +203,30 @@
   .estado-envio{border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:16px;display:none}
   .estado-envio.auto{display:block;background:#ecfdf3;border:1.5px solid #86efac;color:#14532d}
   .estado-envio.manual{display:block;background:#fff8e6;border:1.5px solid #f3d38a;color:#5c4400}
+  .carrito{background:#fff;border:1.5px solid var(--navy);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+  .carrito-tit{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);margin-bottom:8px}
+  .carrito ul{list-style:none}
+  .carrito li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-top:1px dashed #d8d2c2}
+  .carrito li:first-child{border-top:0}
+  .c-nom{font-size:14px;font-weight:700;line-height:1.3}
+  .c-sku{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+  .c-sku.no{color:var(--error)}
+  .c-cant{width:64px!important;padding:8px 10px!important;text-align:center;background:#fff!important}
+  .c-quitar{background:none;border:none;color:var(--error);font-family:inherit;font-size:12.5px;font-weight:700;text-decoration:underline;cursor:pointer}
+  .agregar-box{background:var(--paper);border:1.5px solid #d8d2c2;border-radius:12px;padding:16px;margin-bottom:14px}
+  .agregar-box .campo{margin-bottom:6px}
+  .btn-agregar{display:block;width:100%;margin-top:8px;background:var(--navy);color:#fff;border:none;border-radius:100px;font-family:inherit;font-weight:800;font-size:15px;padding:12px 20px;cursor:pointer}
+  .btn-agregar:disabled{opacity:.6;cursor:wait}
+  .pregunta-otro{background:#eef3f9;border-radius:12px;padding:16px;margin-bottom:14px;text-align:center}
+  .pregunta-tit{font-size:17px;font-weight:900;color:var(--navy);margin-bottom:12px}
+  .pregunta-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .btn-si,.btn-no{font-family:inherit;font-weight:800;font-size:14px;padding:11px 18px;border-radius:100px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn-si{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .btn-no{background:var(--wsp);color:#fff;border:1.5px solid var(--wsp)}
+  .pregunta-nota{font-size:12.5px;color:var(--muted);margin-top:12px}
+  .sin-sku{text-align:center;margin:4px 0 22px}
+  .link-btn{background:none;border:none;font-family:inherit;color:var(--blue);font-weight:700;font-size:14px;text-decoration:underline;cursor:pointer}
+  @media (max-width:560px){.pregunta-btns{flex-direction:column}.btn-si,.btn-no{width:100%}}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -235,12 +259,42 @@
     <div class="info-sku">
       <p><strong>Con SKU y cantidad, tu cotización llega en forma automática.</strong> La generamos al momento, con precio, despacho a tu comuna y folio oficial, y te llega por WhatsApp.</p>
       <p>El SKU es el número que aparece bajo el nombre de cada producto en <a href="https://chilemaquina.pro" target="_blank" rel="noopener">chilemaquina.pro</a> (por ejemplo, <em>SKU: 6129</em>).</p>
-      <p class="info-sin">¿No sabes el SKU? Déjalo en blanco y describe lo que necesitas al final del formulario. En ese caso, un asesor revisará tu solicitud y te enviará la cotización.</p>
+      <p class="info-sin">¿No sabes el SKU? Usa el enlace "No conozco el SKU" y describe lo que necesitas. En ese caso, un asesor revisará tu solicitud y te enviará la cotización.</p>
     </div>
 
-    <div id="items"></div>
-    <button type="button" class="agregar-item" id="agregar-item">+ Agregar otro SKU</button>
+    <div id="carrito" class="carrito" hidden>
+      <div class="carrito-tit">Tu cotización <span id="carrito-n"></span></div>
+      <ul id="carrito-lista"></ul>
+    </div>
 
+    <div id="agregar-box" class="agregar-box">
+      <div class="fila-sku">
+        <div class="campo">
+          <label for="sku-nuevo">SKU</label>
+          <input type="text" id="sku-nuevo" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Ej: 6129">
+        </div>
+        <div class="campo">
+          <label for="cant-nuevo">Cantidad</label>
+          <input type="text" id="cant-nuevo" inputmode="numeric" maxlength="4" value="1">
+        </div>
+      </div>
+      <div class="sku-res" id="sku-res" aria-live="polite"></div>
+      <button type="button" class="btn-agregar" id="btn-agregar">+ Agregar a mi cotización</button>
+    </div>
+
+    <div id="pregunta-otro" class="pregunta-otro" hidden>
+      <p class="pregunta-tit">¿Quieres cotizar otro producto?</p>
+      <div class="pregunta-btns">
+        <button type="button" class="btn-si" id="btn-otro-sku">Sí, agregar otro SKU</button>
+        <a class="btn-si" id="btn-tienda" href="https://chilemaquina.pro" target="_blank" rel="noopener">Sí, buscarlo en la tienda ↗</a>
+        <button type="button" class="btn-no" id="btn-continuar">No, continuar con mis datos</button>
+      </div>
+      <p class="pregunta-nota">En cada ficha de la tienda encontrarás el botón <strong>"Cotizar este producto"</strong>: lo suma a esta misma cotización.</p>
+    </div>
+
+    <p class="sin-sku"><button type="button" class="link-btn" id="btn-sin-sku">No conozco el SKU, quiero describir lo que necesito →</button></p>
+
+    <div id="paso-datos" hidden>
     <div class="seccion-titulo">2. Tus datos</div>
 
     <div class="campo">
@@ -323,17 +377,18 @@
       <input type="text" id="direccion" name="direccion" autocomplete="street-address" placeholder="Calle, número, depto u oficina">
     </div>
 
-    <div class="seccion-titulo">3. ¿No sabes el SKU? Descríbelo aquí</div>
+    <div class="seccion-titulo">3. ¿Algo que no tenga SKU? Descríbelo aquí</div>
 
     <div class="campo">
       <label for="descripcion">Lo que necesitas <span class="opcional" id="desc-ayuda">(obligatorio si no indicaste ningún SKU)</span></label>
-      <textarea id="descripcion" name="descripcion" placeholder="Ej: 2 máquinas rectas industriales para jeans y 1 overlock de 4 hilos; taller con 3 operarias."></textarea>
+      <textarea id="descripcion" name="descripcion" placeholder="Ej: 2 máquinas rectas industriales para jeans y 1 overlock de 4 hilos; taller con 3 operarias. Si todo tiene SKU, déjalo en blanco."></textarea>
     </div>
 
     <div class="estado-envio" id="estado-envio" aria-live="polite"></div>
 
     <button type="submit" class="btn-wsp" id="btn-enviar">💬 Enviar solicitud por WhatsApp</button>
     <p class="nota-envio">Al presionar el botón se abrirá WhatsApp con tu solicitud lista para enviar. Sin registro, sin spam.</p>
+    </div>
   </form>
 </main>
 
@@ -449,13 +504,15 @@
   var productoURL = (params.get("producto") || "").slice(0, 120);
   if (productoURL && !skuURL) $("descripcion").value = productoURL;
 
-  // ---------- Productos por SKU ----------
-  var contItems = $("items");
-  var contador = 0;
-  var cacheSku = {};   // SKU (mayúsculas) -> {nombre, url, a_pedido} | null si no existe
-  var sinVerificar = {};   // SKU que no se pudo consultar (sin conexión): no se descarta, lo revisa un asesor
-
-  function normSku(v){ return String(v || "").trim().toUpperCase(); }
+  // ---------- Carrito de cotización (SKU + cantidad) ----------
+  var cacheSku = {};       // SKU -> {nombre, a_pedido, ...} | null si no existe en la tienda
+  var sinVerificar = {};   // SKU que no se pudo consultar (sin conexión): lo revisa un asesor
+  var KEY_CARRO = "cq_carrito";
+  function normSku(v){ return String(v || "").trim().toUpperCase().replace(/[^0-9A-Z\-]/g, ""); }
+  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function leerCarro(){ try { var v = JSON.parse(localStorage.getItem(KEY_CARRO) || "[]"); return Array.isArray(v) ? v : []; } catch(e){ return []; } }
+  function guardarCarro(){ try { localStorage.setItem(KEY_CARRO, JSON.stringify(carro)); } catch(e){} }
+  var carro = leerCarro().filter(function(x){ return x && x.sku && x.cant > 0; });
 
   function consultarSkus(lista){
     var pedir = lista.filter(function(k){ return k && !(k in cacheSku); });
@@ -463,112 +520,128 @@
     return fetch(SB + "cm_sku_info", {method:"POST", headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"}, body:JSON.stringify({skus:pedir})})
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(rows){
-        if (!rows) { pedir.forEach(function(k){ sinVerificar[k] = true; }); return; }   // sin respuesta: queda para un asesor
+        if (!rows) { pedir.forEach(function(k){ sinVerificar[k] = true; }); return; }
         pedir.forEach(function(k){ cacheSku[k] = null; delete sinVerificar[k]; });
         rows.forEach(function(x){ cacheSku[normSku(x.sku)] = x; });
       })
       .catch(function(){ pedir.forEach(function(k){ sinVerificar[k] = true; }); });
   }
 
-  function pintarSku(div){
-    var k = normSku(div.querySelector(".f-sku").value);
-    var res = div.querySelector(".sku-res");
-    res.className = "sku-res"; res.innerHTML = "";
-    if (!k) { actualizarEstado(); return; }
-    if (!(k in cacheSku)) {
-      res.textContent = sinVerificar[k] ? "No pudimos verificar este SKU ahora; un asesor lo revisará." : "Buscando…";
-      actualizarEstado(); return;
-    }
-    var x = cacheSku[k];
-    if (x){
-      res.className = "sku-res ok";
-      res.innerHTML = "✓ " + esc(x.nombre) + (x.a_pedido ? '<span class="tag-pedido">A pedido</span>' : "");
-    } else {
-      res.className = "sku-res no";
-      res.textContent = "No encontramos ese SKU en la tienda. Revísalo o descríbelo al final; un asesor lo verá.";
-    }
+  // Agrega (o suma) un SKU. Devuelve una promesa con: "ok" | "noexiste" | "sinverificar" | "invalido"
+  function agregarSku(sku, cant){
+    var k = normSku(sku), n = parseInt(cant, 10);
+    if (!k || !(n >= 1)) return Promise.resolve("invalido");
+    return consultarSkus([k]).then(function(){
+      var x = cacheSku[k];
+      if (x === null) return "noexiste";
+      var ya = carro.filter(function(c){ return c.sku === k; })[0];
+      if (ya) ya.cant += n;
+      else carro.push({sku:k, cant:n, nombre: x ? x.nombre : "", a_pedido: !!(x && x.a_pedido), ok: !!x});
+      guardarCarro(); pintarCarro();
+      return x ? "ok" : "sinverificar";
+    });
+  }
+
+  function pintarCarro(){
+    var ul = $("carrito-lista");
+    $("carrito").hidden = !carro.length;
+    $("carrito-n").textContent = carro.length ? "(" + carro.length + (carro.length === 1 ? " producto)" : " productos)") : "";
+    ul.innerHTML = carro.map(function(c, i){
+      return '<li><div><span class="c-nom">' + esc(c.nombre || ("SKU " + c.sku)) + (c.a_pedido ? ' <span class="tag-pedido">A pedido</span>' : "") + '</span>' +
+        '<span class="c-sku' + (c.ok ? "" : " no") + '">SKU ' + esc(c.sku) + (c.ok ? "" : " · sin verificar, lo revisa un asesor") + '</span></div>' +
+        '<input type="text" class="c-cant" inputmode="numeric" maxlength="4" aria-label="Cantidad" data-i="' + i + '" value="' + c.cant + '">' +
+        '<button type="button" class="c-quitar" data-i="' + i + '">Quitar</button></li>';
+    }).join("");
+    actualizarPasos();
     actualizarEstado();
   }
-  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  $("carrito-lista").addEventListener("click", function(e){
+    var b = e.target.closest(".c-quitar"); if (!b) return;
+    carro.splice(+b.getAttribute("data-i"), 1); guardarCarro(); pintarCarro();
+    if (!carro.length) mostrarAgregar(true);
+  });
+  $("carrito-lista").addEventListener("change", function(e){
+    var inp = e.target.closest(".c-cant"); if (!inp) return;
+    var n = parseInt(inp.value, 10), i = +inp.getAttribute("data-i");
+    if (n >= 1) { carro[i].cant = n; } else { inp.value = carro[i].cant; }
+    guardarCarro(); actualizarEstado();
+  });
 
-  function crearItem(skuInicial){
-    contador++;
-    var idx = contador;
-    var div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML =
-      '<div class="item-cabecera">' +
-        '<span class="item-num">Producto <span class="n"></span></span>' +
-        '<button type="button" class="quitar-item">Quitar</button>' +
-      '</div>' +
-      '<div class="fila-sku">' +
-        '<div class="campo">' +
-          '<label for="sku-' + idx + '">SKU</label>' +
-          '<input type="text" id="sku-' + idx + '" class="f-sku" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Ej: 6129">' +
-        '</div>' +
-        '<div class="campo">' +
-          '<label for="cantidad-' + idx + '">Cantidad</label>' +
-          '<input type="text" id="cantidad-' + idx + '" class="f-cantidad" inputmode="numeric" maxlength="4" placeholder="Ej: 1">' +
-        '</div>' +
-      '</div>' +
-      '<div class="sku-res" aria-live="polite"></div>';
-
-    div.querySelector(".quitar-item").addEventListener("click", function(){ div.remove(); renumerar(); actualizarEstado(); });
-    var inp = div.querySelector(".f-sku"), t = null;
-    function verificar(){ var k = normSku(inp.value); if (!k) { pintarSku(div); return; } pintarSku(div); consultarSkus([k]).then(function(){ pintarSku(div); }); }
-    inp.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(verificar, 500); });
-    inp.addEventListener("blur", verificar);
-    div.querySelector(".f-cantidad").addEventListener("input", actualizarEstado);
-    if (skuInicial){ inp.value = skuInicial; div.querySelector(".f-cantidad").value = "1"; }
-
-    contItems.appendChild(div);
-    renumerar();
-    if (skuInicial) verificar();
-    return div;
+  var datosAbiertos = false;
+  function mostrarAgregar(si){
+    $("agregar-box").hidden = !si;
+    actualizarPasos();
+    if (si) setTimeout(function(){ $("sku-nuevo").focus(); }, 50);
+  }
+  function abrirDatos(){
+    datosAbiertos = true;
+    $("agregar-box").hidden = true;
+    actualizarPasos();
+    $("paso-datos").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  function actualizarPasos(){
+    var agregando = !$("agregar-box").hidden;
+    $("pregunta-otro").hidden = !carro.length || agregando || datosAbiertos;
+    $("paso-datos").hidden = !datosAbiertos;
+    $("btn-sin-sku").parentNode.hidden = datosAbiertos;
+    if (datosAbiertos && carro.length) $("btn-otro-sku").textContent = "Sí, agregar otro SKU";
   }
 
-  function renumerar(){
-    var items = contItems.querySelectorAll(".item");
-    for (var i = 0; i < items.length; i++){
-      items[i].querySelector(".item-num .n").textContent = (i + 1) + " de " + items.length;
-      items[i].querySelector(".quitar-item").style.display = (items.length === 1) ? "none" : "inline";
-    }
+  var skuRes = $("sku-res");
+  function verificarNuevo(){
+    var k = normSku($("sku-nuevo").value);
+    skuRes.className = "sku-res"; skuRes.textContent = "";
+    if (!k) return;
+    skuRes.textContent = "Buscando…";
+    consultarSkus([k]).then(function(){
+      if (normSku($("sku-nuevo").value) !== k) return;
+      var x = cacheSku[k];
+      if (x){ skuRes.className = "sku-res ok"; skuRes.innerHTML = "✓ " + esc(x.nombre) + (x.a_pedido ? '<span class="tag-pedido">A pedido</span>' : ""); }
+      else if (x === null){ skuRes.className = "sku-res no"; skuRes.textContent = "No encontramos ese SKU en la tienda. Revísalo, o descríbelo más abajo."; }
+      else { skuRes.className = "sku-res no"; skuRes.textContent = "No pudimos verificar el SKU ahora; si lo agregas, un asesor lo revisará."; }
+    });
   }
+  var tSku = null;
+  $("sku-nuevo").addEventListener("input", function(){ clearTimeout(tSku); tSku = setTimeout(verificarNuevo, 500); });
+  $("sku-nuevo").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("btn-agregar").click(); } });
+  $("cant-nuevo").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("btn-agregar").click(); } });
 
-  // Lee las filas: válidas (SKU encontrado + cantidad), con problemas, y vacías
+  $("btn-agregar").addEventListener("click", function(){
+    var btn = this; btn.disabled = true;
+    agregarSku($("sku-nuevo").value, $("cant-nuevo").value).then(function(r){
+      btn.disabled = false;
+      if (r === "invalido"){ skuRes.className = "sku-res no"; skuRes.textContent = "Escribe el SKU y una cantidad (número mayor que 0)."; return; }
+      if (r === "noexiste"){ skuRes.className = "sku-res no"; skuRes.textContent = "No encontramos ese SKU en la tienda. Revísalo, o descríbelo más abajo."; return; }
+      $("sku-nuevo").value = ""; $("cant-nuevo").value = "1"; skuRes.className = "sku-res"; skuRes.textContent = "";
+      mostrarAgregar(false);
+    });
+  });
+  $("btn-otro-sku").addEventListener("click", function(){ mostrarAgregar(true); });
+  $("btn-continuar").addEventListener("click", abrirDatos);
+  $("btn-sin-sku").addEventListener("click", function(){ abrirDatos(); setTimeout(function(){ $("descripcion").focus(); }, 400); });
+
+  // Lee el carrito para el envío
   function leerItems(){
     var out = {ok:[], malos:[], incompletos:0};
-    var items = contItems.querySelectorAll(".item");
-    for (var i = 0; i < items.length; i++){
-      var k = normSku(items[i].querySelector(".f-sku").value);
-      var cant = items[i].querySelector(".f-cantidad").value.trim();
-      if (!k && !cant) continue;
-      var n = parseInt(cant, 10);
-      if (!k || !/^\d+$/.test(cant) || n < 1) { out.incompletos++; continue; }
-      if (cacheSku[k]) out.ok.push({sku:k, cant:n, nombre:cacheSku[k].nombre});
-      else out.malos.push({sku:k, cant:n});
-    }
+    carro.forEach(function(c){ (c.ok ? out.ok : out.malos).push({sku:c.sku, cant:c.cant, nombre:c.nombre}); });
     return out;
   }
-
   function modoEnvio(){
-    var it = leerItems();
-    var desc = $("descripcion").value.trim();
-    if (it.ok.length && !it.malos.length && !it.incompletos && !desc) return "auto";
+    var it = leerItems(), desc = $("descripcion").value.trim();
+    if (it.ok.length && !it.malos.length && !desc) return "auto";
     if (it.ok.length || it.malos.length || desc) return "manual";
     return "vacio";
   }
-
   function actualizarEstado(){
     var m = modoEnvio(), box = $("estado-envio"), btn = $("btn-enviar");
-    $("desc-ayuda").textContent = leerItems().ok.length ? "(opcional)" : "(obligatorio si no indicaste ningún SKU)";
+    $("desc-ayuda").textContent = carro.length ? "(opcional)" : "(obligatorio si no agregaste ningún SKU)";
     if (m === "auto"){
       box.className = "estado-envio auto";
-      box.innerHTML = "<strong>Cotización automática.</strong> Todos los SKU están verificados: al enviar, la cotización se genera y te llega por WhatsApp.";
+      box.innerHTML = "<strong>Cotización automática.</strong> Todos los productos tienen SKU verificado: al enviar, la cotización se genera y te llega por WhatsApp.";
       btn.textContent = "💬 Enviar y recibir mi cotización";
     } else if (m === "manual"){
       box.className = "estado-envio manual";
-      box.innerHTML = "<strong>Revisión por un asesor.</strong> " + ($("descripcion").value.trim() ? "Como incluiste una descripción" : "Como hay productos sin SKU verificado") + ", un asesor tomará tus datos y te enviará la cotización. Para que sea automática, deja solo SKU verificados y cantidades.";
+      box.innerHTML = "<strong>Revisión por un asesor.</strong> " + ($("descripcion").value.trim() ? "Como incluiste una descripción" : "Como hay productos sin SKU verificado") + ", un asesor tomará tus datos y te enviará la cotización. Para que sea automática, deja solo productos con SKU verificado.";
       btn.textContent = "💬 Enviar solicitud por WhatsApp";
     } else {
       box.className = "estado-envio"; box.innerHTML = "";
@@ -577,8 +650,19 @@
   }
   $("descripcion").addEventListener("input", actualizarEstado);
 
-  crearItem(skuURL);
-  $("agregar-item").addEventListener("click", function(){ var nuevo = crearItem(""); nuevo.querySelector(".f-sku").focus(); });
+  // Llegada desde una ficha: ?sku=6129&cant=1 se suma al carrito y se limpia la dirección para no repetirlo al recargar
+  var cantURL = parseInt(params.get("cant") || "1", 10);
+  pintarCarro();
+  if (skuURL){
+    agregarSku(skuURL, cantURL >= 1 ? cantURL : 1).then(function(r){
+      if (r === "noexiste"){ $("sku-nuevo").value = skuURL; verificarNuevo(); mostrarAgregar(true); }
+      else mostrarAgregar(false);
+      setTimeout(function(){ $("carrito").scrollIntoView({behavior:"smooth", block:"start"}); }, 150);
+      try { params.delete("sku"); params.delete("cant"); history.replaceState(null, "", location.pathname + (params.toString() ? "?" + params : "")); } catch(e){}
+    });
+  } else {
+    mostrarAgregar(!carro.length);
+  }
 
   function aplicarRetiro(){
     var retiro = /^Retiro en tienda/.test(regionSel.value);
@@ -593,13 +677,7 @@
   form.addEventListener("submit", function(ev){
     ev.preventDefault();
 
-    // Si hay SKU todavía sin verificar, se consultan antes de decidir el destino
-    var pend = [];
-    contItems.querySelectorAll(".f-sku").forEach(function(i){ var k = normSku(i.value); if (k && !(k in cacheSku)) { delete sinVerificar[k]; pend.push(k); } });
-    consultarSkus(pend).then(function(){
-      contItems.querySelectorAll(".item").forEach(pintarSku);
-      enviar();
-    });
+    enviar();
   });
 
   function enviar(){
@@ -619,8 +697,7 @@
 
     // Validación en el mismo orden en que aparecen los campos
     var faltan = [];
-    if (it.incompletos) faltan.push("SKU y cantidad (número) en cada producto");
-    if (!it.ok.length && !it.malos.length && !desc) faltan.push("al menos un SKU con su cantidad, o la descripción de lo que necesitas");
+    if (!it.ok.length && !it.malos.length && !desc) faltan.push("al menos un producto con SKU, o la descripción de lo que necesitas");
     if (!nombre) faltan.push("nombre y apellido");
     if (!rut) faltan.push("RUT");
     else if (!rutValido(rut)) { faltan.push("un RUT válido"); marcar("rut", "rut-error", "El RUT no es válido. Revisa el número y el dígito verificador."); }
@@ -665,6 +742,7 @@
 
     var url = "https://wa.me/" + (auto ? WSP_AUTO : WSP_ASESOR) + "?text=" + encodeURIComponent(lineas.join("\n"));
     window.open(url, "_blank", "noopener");
+    try { localStorage.removeItem(KEY_CARRO); } catch(e){}   // la solicitud ya salió: la próxima visita parte con el carrito vacío (en pantalla se mantiene por si hay que reenviar)
   }
 })();
 </script>
