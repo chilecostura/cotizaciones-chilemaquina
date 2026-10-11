@@ -167,6 +167,43 @@
   footer a{color:var(--hilo);text-decoration:none;font-weight:700}
   footer a:hover,footer a:focus-visible{text-decoration:underline}
   a:focus-visible{outline:3px solid var(--hilo);outline-offset:3px}
+  .label-grupo{
+    display:block;font-size:13px;font-weight:800;text-transform:uppercase;
+    letter-spacing:0.05em;color:var(--navy);margin-bottom:7px;
+  }
+  .opciones-tipo{display:flex;gap:12px;flex-wrap:wrap}
+  .opcion{
+    display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;
+    text-transform:none;letter-spacing:0;font-size:15px;font-weight:700;color:var(--ink);
+    background:var(--paper);border:1.5px solid #d8d2c2;border-radius:10px;padding:11px 18px;
+  }
+  .opcion:has(input:checked){border-color:var(--navy);background:#eef3f9}
+  .opcion input{accent-color:var(--navy);width:18px;height:18px}
+  .tel-wrap{display:flex;align-items:stretch}
+  .tel-pref{
+    display:flex;align-items:center;padding:0 12px;font-weight:700;color:var(--navy);
+    background:#ece7da;border:1.5px solid #d8d2c2;border-right:0;border-radius:10px 0 0 10px;
+  }
+  .tel-wrap input{border-radius:0 10px 10px 0}
+  .error-campo{display:block;font-size:12.5px;line-height:1.35;color:var(--error);margin-top:4px;min-height:17px}
+  .campo.invalido input,.campo.invalido select{border-color:var(--error)}
+  select:disabled{opacity:.6;cursor:not-allowed}
+  .info-sku{background:#eef3f9;border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:18px;font-size:14px}
+  .info-sku p{margin:0 0 8px}
+  .info-sku p:last-child{margin-bottom:0}
+  .info-sku a{color:var(--blue);font-weight:800}
+  .info-sin{color:var(--muted)}
+  .fila-sku{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+  @media (max-width:560px){.fila-sku{grid-template-columns:1.6fr 1fr}}
+  .sku-res{font-size:13px;margin-top:6px;min-height:18px;line-height:1.35}
+  .sku-res.ok{color:#166534}
+  .sku-res.no{color:var(--error)}
+  .sku-res a{color:inherit}
+  .tag-pedido{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:1px 7px;border-radius:6px;margin-left:6px}
+  .estado-envio{border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:16px;display:none}
+  .estado-envio.auto{display:block;background:#ecfdf3;border:1.5px solid #86efac;color:#14532d}
+  .estado-envio.manual{display:block;background:#fff8e6;border:1.5px solid #f3d38a;color:#5c4400}
+  [hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -183,26 +220,69 @@
 
 <section class="hero">
   <span class="eyebrow">Cotizaciones · Respuesta por WhatsApp</span>
-  <h1>Cuéntanos qué necesitas,<br><span class="subrayado">nosotros cotizamos</span></h1>
-  <p>Completa el formulario y tu solicitud llega directo a nuestro equipo técnico por WhatsApp. Más de 35 años asesorando talleres y empresas de confección en Chile.</p>
+  <h1>Cotiza con el SKU,<br><span class="subrayado">recíbela al instante</span></h1>
+  <p>Si indicas el SKU y la cantidad, la cotización formal se genera en forma automática. Si no lo conoces, cuéntanos qué necesitas y un asesor la prepara. Más de 35 años asesorando talleres y empresas de confección en Chile.</p>
 </section>
 
 <main>
   <form id="form-cotizacion" novalidate>
     <div class="aviso-error" id="aviso-error" role="alert">
-      Completa los campos marcados con <strong>*</strong> (en cada producto: categoría y cantidad) para poder enviar tu solicitud.
+      <span id="aviso-texto">Completa los campos marcados con <strong>*</strong> (en cada producto: categoría y cantidad) para poder enviar tu solicitud.</span>
     </div>
 
-    <div class="seccion-titulo">Tus datos</div>
+    <div class="seccion-titulo">1. ¿Qué quieres cotizar?</div>
+
+    <div class="info-sku">
+      <p><strong>Con SKU y cantidad, tu cotización llega en forma automática.</strong> La generamos al momento, con precio, despacho a tu comuna y folio oficial, y te llega por WhatsApp.</p>
+      <p>El SKU es el número que aparece bajo el nombre de cada producto en <a href="https://chilemaquina.pro" target="_blank" rel="noopener">chilemaquina.pro</a> (por ejemplo, <em>SKU: 6129</em>).</p>
+      <p class="info-sin">¿No sabes el SKU? Déjalo en blanco y describe lo que necesitas al final del formulario. En ese caso, un asesor revisará tu solicitud y te enviará la cotización.</p>
+    </div>
+
+    <div id="items"></div>
+    <button type="button" class="agregar-item" id="agregar-item">+ Agregar otro SKU</button>
+
+    <div class="seccion-titulo">2. Tus datos</div>
+
+    <div class="campo">
+      <span class="label-grupo" id="lbl-tipo">¿Cotizas como persona o empresa? <span class="req">*</span></span>
+      <div class="opciones-tipo" role="radiogroup" aria-labelledby="lbl-tipo">
+        <label class="opcion"><input type="radio" name="tipo-cliente" value="persona" checked> Persona</label>
+        <label class="opcion"><input type="radio" name="tipo-cliente" value="empresa"> Empresa</label>
+      </div>
+    </div>
 
     <div class="fila">
       <div class="campo">
-        <label for="nombre">Nombre <span class="req">*</span></label>
+        <label for="nombre">Nombre y apellido <span class="req">*</span></label>
         <input type="text" id="nombre" name="nombre" autocomplete="name" required>
       </div>
       <div class="campo">
-        <label for="empresa">Empresa o taller <span class="opcional">(opcional)</span></label>
-        <input type="text" id="empresa" name="empresa" autocomplete="organization">
+        <label for="rut">RUT <span class="req">*</span> <span class="opcional" id="rut-ayuda">(de la persona)</span></label>
+        <input type="text" id="rut" name="rut" inputmode="text" autocomplete="off" placeholder="Ej: 12.345.678-5" maxlength="12" required aria-describedby="rut-error">
+        <span class="error-campo" id="rut-error" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <div class="fila solo-empresa" id="bloque-empresa" hidden>
+      <div class="campo">
+        <label for="empresa">Razón social <span class="req">*</span></label>
+        <input type="text" id="empresa" name="empresa" autocomplete="organization" placeholder="Ej: Confecciones Las Rosas SpA">
+      </div>
+      <div class="campo">
+        <label for="giro">Giro <span class="req">*</span></label>
+        <input type="text" id="giro" name="giro" placeholder="Ej: Confección de prendas de vestir">
+      </div>
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="telefono">Teléfono <span class="req">*</span></label>
+        <div class="tel-wrap"><span class="tel-pref">+56</span><input type="tel" id="telefono" name="telefono" autocomplete="tel-national" inputmode="tel" placeholder="9 1234 5678" maxlength="17" required aria-describedby="tel-error"></div>
+        <span class="error-campo" id="tel-error" aria-live="polite"></span>
+      </div>
+      <div class="campo">
+        <label for="correo">Correo <span class="opcional">(opcional — si prefieres recibir también por email)</span></label>
+        <input type="email" id="correo" name="correo" autocomplete="email" placeholder="tucorreo@ejemplo.cl">
       </div>
     </div>
 
@@ -230,24 +310,29 @@
           <option>Retiro en tienda (Santiago / Valparaíso)</option>
         </select>
       </div>
-      <div class="campo">
-        <label for="correo">Correo <span class="opcional">(opcional — si prefieres recibir también por email)</span></label>
-        <input type="email" id="correo" name="correo" autocomplete="email" placeholder="tucorreo@ejemplo.cl">
+      <div class="campo" id="campo-comuna">
+        <label for="comuna">Comuna <span class="req">*</span></label>
+        <select id="comuna" name="comuna" required disabled>
+          <option value="">Primero elige la región…</option>
+        </select>
       </div>
     </div>
 
-    <div class="seccion-titulo">¿Qué necesitas cotizar?</div>
-
-    <div id="items"></div>
-
-    <button type="button" class="agregar-item" id="agregar-item">+ Agregar otro producto</button>
-
-    <div class="campo">
-      <label for="uso">¿Para qué los usarás? <span class="opcional">(opcional — nos ayuda a recomendarte los equipos correctos)</span></label>
-      <textarea id="uso" name="uso" placeholder="Ej: confección de ropa deportiva, taller con 3 operarias, tela stretch…"></textarea>
+    <div class="campo" id="campo-direccion">
+      <label for="direccion">Dirección de despacho <span class="req">*</span></label>
+      <input type="text" id="direccion" name="direccion" autocomplete="street-address" placeholder="Calle, número, depto u oficina">
     </div>
 
-    <button type="submit" class="btn-wsp">💬 Enviar solicitud por WhatsApp</button>
+    <div class="seccion-titulo">3. ¿No sabes el SKU? Descríbelo aquí</div>
+
+    <div class="campo">
+      <label for="descripcion">Lo que necesitas <span class="opcional" id="desc-ayuda">(obligatorio si no indicaste ningún SKU)</span></label>
+      <textarea id="descripcion" name="descripcion" placeholder="Ej: 2 máquinas rectas industriales para jeans y 1 overlock de 4 hilos; taller con 3 operarias."></textarea>
+    </div>
+
+    <div class="estado-envio" id="estado-envio" aria-live="polite"></div>
+
+    <button type="submit" class="btn-wsp" id="btn-enviar">💬 Enviar solicitud por WhatsApp</button>
     <p class="nota-envio">Al presionar el botón se abrirá WhatsApp con tu solicitud lista para enviar. Sin registro, sin spam.</p>
   </form>
 </main>
@@ -266,63 +351,179 @@
 
 <script>
 (function(){
-  var NUMERO_WSP = "56945494865";
-  var CATEGORIAS = [
-    "Máquina recta industrial","Overlock industrial","Overlock / máquina de coser doméstica",
-    "Colleretera / tapacostura","Bordadora doméstica","Bordadora industrial / multi-cabezal",
-    "Cortadora de tela","Plancha o equipo de planchado","Estampadora / sublimadora",
-    "Máquina de tejer","Máquina para cuero y calzado","Cerradora de sacos",
-    "Máquina de especialidad","Repuestos o accesorios","Importación directa a pedido",
-    "Otro / no estoy seguro"
-  ];
+  // Destinos (11-10-2026): con SKU verificados -> WhatsApp del bot que emite la cotización en Bsale (+56 9 7809 9630);
+  // sin SKU o con SKU no encontrado -> WhatsApp de ventas atendido por personas (+56 9 4549 4865).
+  var WSP_AUTO = "56978099630";
+  var WSP_ASESOR = "56945494865";
+  var SB = "https://sfasykouskeuzsdxnyqb.supabase.co/rest/v1/rpc/";
+  var SB_KEY = "sb_publishable_kwsChvUjL9RX2l7LosWQkg_YuoAL6qJ";
+
+  // Comunas por región: misma lista que usa la tienda (chilemaquina.pro/checkout/municipalities) para calcular el despacho. Leída el 11-10-2026.
+  var COMUNAS = {"Arica y Parinacota": ["Putre", "General Lagos", "Camarones", "Arica"], "Tarapacá": ["Pozo Almonte", "Pica", "Iquique", "Huara", "Colchane", "Camiña", "Alto Hospicio"], "Antofagasta": ["Tocopilla", "Taltal", "Sierra Gorda", "San Pedro de Atacama", "Ollagüe", "Mejillones", "María Elena", "Calama", "Antofagasta"], "Atacama": ["Vallenar", "Tierra Amarilla", "Huasco", "Freirina", "Diego de Almagro", "Copiapó", "Chañaral", "Caldera", "Alto del Carmen"], "Coquimbo": ["Vicuña", "Tongoy", "Salamanca", "Río Hurtado", "Punitaqui", "Paiguano", "Ovalle", "Monte Patria", "Los Vilos", "La Serena", "La Higuera", "Illapel", "Coquimbo", "Combarbalá", "Canela", "Andacollo"], "Valparaíso": ["Zapallar", "Viña del Mar", "Villa Alemana", "Valparaíso", "Santo Domingo", "Santa María", "San Felipe", "San Esteban", "San Antonio", "Rinconada", "Quintero", "Quilpué", "Quillota", "Putaendo", "Puchuncaví", "Petorca", "Papudo", "Panquehue", "Olmué", "Nogales", "Los Andes", "Llay Llay", "Limache", "La Ligua", "La Cruz", "La Calera", "Juan Fernández", "Isla de Pascua", "Hijuelas", "El Tabo", "El Quisco", "Concón", "Catemu", "Casablanca", "Cartagena", "Calle Larga", "Cabildo", "Algarrobo"], "Metropolitana": ["Vitacura", "Tiltil", "Talagante", "Santiago Centro", "San Ramón", "San Pedro", "San Miguel", "San José de Maipo", "San Joaquín", "San Bernardo", "Renca", "Recoleta", "Quinta Normal", "Quilicura", "Puente Alto", "Pudahuel", "Providencia", "Pirque", "Peñalolén", "Peñaflor", "Pedro Aguirre Cerda", "Paine", "Padre Hurtado", "Ñuñoa", "Melipilla", "María Pinto", "Maipú", "Macul", "Lo Prado", "Lo Espejo", "Lo Barnechea", "Las Condes", "Lampa", "La Reina", "La Pintana", "La Granja", "La Florida", "La Cisterna", "Isla de Maipo", "Independencia", "Huechuraba", "Estación Central", "El Monte", "El Bosque", "Curacaví", "Conchalí", "Colina", "Cerro Navia", "Cerrillos", "Calera de Tango", "Buin", "Alhué"], "O'Higgins": ["Santa Cruz", "San Vicente", "San Fernando", "Requínoa", "Rengo", "Rancagua", "Quinta de Tilcoco", "Pumanque", "Placilla", "Pichilemu", "Pichidegua", "Peumo", "Peralillo", "Paredones", "Palmilla", "Olivar", "Navidad", "Nancagua", "Mostazal", "Marchihue", "Malloa", "Machalí", "Lolol", "Litueche", "Las Cabras", "La Estrella", "Graneros", "Doñihue", "Coltauco", "Coinco", "Codegua", "Chimbarongo", "Chépica"], "Maule": ["Yerbas Buenas", "Villa Alegre", "Vichuquén", "Teno", "Talca", "San Rafael", "San Javier", "San Clemente", "Sagrada Familia", "Romeral", "Río Claro", "Retiro", "Rauco", "Pencahue", "Pelluhue", "Pelarco", "Parral", "Molina", "Maule", "Longaví", "Linares", "Licantén", "Hualañé", "Empedrado", "Curicó", "Curepto", "Constitución", "Colbún", "Chanco", "Cauquenes"], "Ñuble": ["Yungay", "Treguaco", "San Nicolás", "San Ignacio", "San Fabián", "San Carlos", "Ránquil", "Quirihue", "Quillón", "Portezuelo", "Pinto", "Pemuco", "Ñiquén", "Ninhue", "El Carmen", "Coihueco", "Coelemu", "Cobquecura", "Chillán Viejo", "Chillán", "Bulnes"], "Biobío": ["Yumbel", "Tucapel", "Tomé", "Tirúa", "Talcahuano", "Santa Juana", "Santa Bárbara", "San Rosendo", "San Pedro de la Paz", "Quilleco", "Quilaco", "Penco", "Negrete", "Nacimiento", "Mulchén", "Lota", "Los Ángeles", "Los Álamos", "Lebu", "Laja", "Hualqui", "Hualpén", "Florida", "Curanilahue", "Coronel", "Contulmo", "Concepción", "Chiguayante", "Cañete", "Cabrero", "Arauco", "Antuco", "Alto Biobío"], "La Araucanía": ["Villarrica", "Vilcún", "Victoria", "Traiguén", "Toltén", "Teodoro Schmidt", "Temuco", "Saavedra", "Renaico", "Purén", "Pucón", "Pitrufquén", "Perquenco", "Padre las Casas", "Nueva Imperial", "Melipeuco", "Lumaco", "Los Sauces", "Lonquimay", "Loncoche", "Lautaro", "Gorbea", "Galvarino", "Freire", "Ercilla", "Curarrehue", "Curacautín", "Cunco", "Collipulli", "Cholchol", "Carahue", "Angol"], "Los Ríos": ["Valdivia", "Río Bueno", "Panguipulli", "Paillaco", "Mariquina", "Máfil", "Los Lagos", "Lanco", "Lago Ranco", "La Unión", "Futrono", "Corral"], "Los Lagos": ["San Pablo", "San Juan de la Costa", "Río Negro", "Quinchao", "Quemchi", "Quellón", "Queilén", "Puyehue", "Purranque", "Puqueldón", "Puerto Varas", "Puerto Octay", "Puerto Montt", "Palena", "Osorno", "Maullín", "Los Muermos", "Llanquihue", "Hualaihué", "Futaleufú", "Frutillar", "Fresia", "Dalcahue", "Curaco de Vélez", "Cochamó", "Chonchi", "Chaitén", "Castro", "Calbuco", "Ancud"], "Aysén": ["Tortel", "Río Ibáñez", "O’Higgins", "Lago Verde", "Guaitecas", "Coyhaique", "Cochrane", "Cisnes", "Chile Chico", "Aisén"], "Magallanes": ["Torres del Paine", "Timaukel", "San Gregorio", "Río Verde", "Punta Arenas", "Primavera", "Porvenir", "Natales", "Laguna Blanca", "Cabo de Hornos", "Antártica"]};
+
+  // ---------- Datos del cliente ----------
+  function $(id){ return document.getElementById(id); }
+  function tipoCliente(){ var r = document.querySelector('input[name="tipo-cliente"]:checked'); return r ? r.value : "persona"; }
+
+  function limpiarRut(v){ return String(v || "").replace(/[^0-9kK]/g, "").toUpperCase(); }
+  function dvRut(cuerpo){
+    var suma = 0, mul = 2;
+    for (var i = cuerpo.length - 1; i >= 0; i--){ suma += parseInt(cuerpo.charAt(i), 10) * mul; mul = mul === 7 ? 2 : mul + 1; }
+    var r = 11 - (suma % 11);
+    return r === 11 ? "0" : (r === 10 ? "K" : String(r));
+  }
+  function rutValido(v){
+    var c = limpiarRut(v);
+    if (c.length < 8 || c.length > 9) return false;
+    var cuerpo = c.slice(0, -1), dv = c.slice(-1);
+    if (!/^\d+$/.test(cuerpo)) return false;
+    return dvRut(cuerpo) === dv;
+  }
+  function formatoRut(v){
+    var c = limpiarRut(v);
+    if (c.length < 2) return c;
+    var cuerpo = c.slice(0, -1), dv = c.slice(-1);
+    return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + dv;
+  }
+  function telLimpio(v){
+    var d = String(v || "").replace(/\D/g, "");
+    if (d.indexOf("56") === 0 && d.length === 11) d = d.slice(2);
+    return d;
+  }
+  function telValido(v){ return /^[2-9]\d{8}$/.test(telLimpio(v)); }
+  function telFormato(v){ var d = telLimpio(v); return d.length === 9 ? "+56 " + d.charAt(0) + " " + d.slice(1, 5) + " " + d.slice(5) : v; }
+
+  function marcar(campoId, errId, msg){
+    var input = $(campoId), campo = input.closest(".campo");
+    if (campo) campo.classList.toggle("invalido", !!msg);
+    if (errId) $(errId).textContent = msg || "";
+  }
+
+  var rutIn = $("rut");
+  rutIn.addEventListener("blur", function(){
+    if (!rutIn.value.trim()) { marcar("rut", "rut-error", ""); return; }
+    rutIn.value = formatoRut(rutIn.value);
+    marcar("rut", "rut-error", rutValido(rutIn.value) ? "" : "El RUT no es válido. Revisa el número y el dígito verificador.");
+  });
+  var telIn = $("telefono");
+  telIn.addEventListener("blur", function(){
+    if (!telIn.value.trim()) { marcar("telefono", "tel-error", ""); return; }
+    marcar("telefono", "tel-error", telValido(telIn.value) ? "" : "Ingresa 9 dígitos, por ejemplo 9 1234 5678.");
+  });
+
+  function aplicarTipo(){
+    var emp = tipoCliente() === "empresa";
+    $("bloque-empresa").hidden = !emp;
+    $("rut-ayuda").textContent = emp ? "(de la empresa)" : "(de la persona)";
+    $("empresa").required = emp; $("giro").required = emp;
+  }
+  var radios = document.querySelectorAll('input[name="tipo-cliente"]');
+  for (var r = 0; r < radios.length; r++) radios[r].addEventListener("change", aplicarTipo);
+  aplicarTipo();
+
+  var regionSel = $("region"), comunaSel = $("comuna");
+  function cargarComunas(){
+    var reg = regionSel.value;
+    var lista = COMUNAS[reg];
+    var retiro = /^Retiro en tienda/.test(reg);
+    $("campo-comuna").hidden = retiro;
+    comunaSel.required = !retiro;
+    comunaSel.innerHTML = "";
+    if (!lista){
+      comunaSel.disabled = true;
+      comunaSel.innerHTML = '<option value="">Primero elige la región…</option>';
+      return;
+    }
+    var ord = lista.slice().sort(function(a, b){ return a.localeCompare(b, "es"); });
+    var html = '<option value="">Selecciona tu comuna…</option>';
+    for (var i = 0; i < ord.length; i++) html += "<option>" + ord[i] + "</option>";
+    comunaSel.innerHTML = html;
+    comunaSel.disabled = false;
+  }
+  regionSel.addEventListener("change", cargarComunas);
+  cargarComunas();
 
   var params = new URLSearchParams(window.location.search);
   var ORIGEN = (params.get("origen") || "directo").slice(0, 40);
+  var skuURL = (params.get("sku") || "").replace(/[^0-9A-Za-z\-]/g, "").slice(0, 20);
   var productoURL = (params.get("producto") || "").slice(0, 120);
+  if (productoURL && !skuURL) $("descripcion").value = productoURL;
 
-  var contItems = document.getElementById("items");
+  // ---------- Productos por SKU ----------
+  var contItems = $("items");
   var contador = 0;
+  var cacheSku = {};   // SKU (mayúsculas) -> {nombre, url, a_pedido} | null si no existe
+  var sinVerificar = {};   // SKU que no se pudo consultar (sin conexión): no se descarta, lo revisa un asesor
 
-  function crearItem(modeloInicial){
+  function normSku(v){ return String(v || "").trim().toUpperCase(); }
+
+  function consultarSkus(lista){
+    var pedir = lista.filter(function(k){ return k && !(k in cacheSku); });
+    if (!pedir.length) return Promise.resolve();
+    return fetch(SB + "cm_sku_info", {method:"POST", headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"}, body:JSON.stringify({skus:pedir})})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(rows){
+        if (!rows) { pedir.forEach(function(k){ sinVerificar[k] = true; }); return; }   // sin respuesta: queda para un asesor
+        pedir.forEach(function(k){ cacheSku[k] = null; delete sinVerificar[k]; });
+        rows.forEach(function(x){ cacheSku[normSku(x.sku)] = x; });
+      })
+      .catch(function(){ pedir.forEach(function(k){ sinVerificar[k] = true; }); });
+  }
+
+  function pintarSku(div){
+    var k = normSku(div.querySelector(".f-sku").value);
+    var res = div.querySelector(".sku-res");
+    res.className = "sku-res"; res.innerHTML = "";
+    if (!k) { actualizarEstado(); return; }
+    if (!(k in cacheSku)) {
+      res.textContent = sinVerificar[k] ? "No pudimos verificar este SKU ahora; un asesor lo revisará." : "Buscando…";
+      actualizarEstado(); return;
+    }
+    var x = cacheSku[k];
+    if (x){
+      res.className = "sku-res ok";
+      res.innerHTML = "✓ " + esc(x.nombre) + (x.a_pedido ? '<span class="tag-pedido">A pedido</span>' : "");
+    } else {
+      res.className = "sku-res no";
+      res.textContent = "No encontramos ese SKU en la tienda. Revísalo o descríbelo al final; un asesor lo verá.";
+    }
+    actualizarEstado();
+  }
+  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  function crearItem(skuInicial){
     contador++;
     var idx = contador;
     var div = document.createElement("div");
     div.className = "item";
-
-    var opciones = '<option value="">Selecciona una categoría…</option>';
-    for (var i = 0; i < CATEGORIAS.length; i++){
-      opciones += '<option>' + CATEGORIAS[i] + '</option>';
-    }
-
     div.innerHTML =
       '<div class="item-cabecera">' +
         '<span class="item-num">Producto <span class="n"></span></span>' +
         '<button type="button" class="quitar-item">Quitar</button>' +
       '</div>' +
-      '<div class="campo">' +
-        '<label for="tipo-' + idx + '">Categoría <span class="req">*</span></label>' +
-        '<select id="tipo-' + idx + '" class="f-tipo">' + opciones + '</select>' +
+      '<div class="fila-sku">' +
+        '<div class="campo">' +
+          '<label for="sku-' + idx + '">SKU</label>' +
+          '<input type="text" id="sku-' + idx + '" class="f-sku" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Ej: 6129">' +
+        '</div>' +
+        '<div class="campo">' +
+          '<label for="cantidad-' + idx + '">Cantidad</label>' +
+          '<input type="text" id="cantidad-' + idx + '" class="f-cantidad" inputmode="numeric" maxlength="4" placeholder="Ej: 1">' +
+        '</div>' +
       '</div>' +
-      '<div class="fila-item">' +
-        '<div class="campo">' +
-          '<label for="modelo-' + idx + '">Marca o modelo <span class="opcional">(opcional)</span></label>' +
-          '<input type="text" id="modelo-' + idx + '" class="f-modelo" placeholder="Ej: Juki DDL-8000A, Siruba, BSQ">' +
-        '</div>' +
-        '<div class="campo">' +
-          '<label for="cantidad-' + idx + '">Cantidad <span class="req">*</span></label>' +
-          '<input type="text" id="cantidad-' + idx + '" class="f-cantidad" inputmode="numeric" placeholder="Ej: 1">' +
-        '</div>' +
-      '</div>';
+      '<div class="sku-res" aria-live="polite"></div>';
 
-    div.querySelector(".quitar-item").addEventListener("click", function(){
-      div.remove();
-      renumerar();
-    });
-
-    if (modeloInicial) div.querySelector(".f-modelo").value = modeloInicial;
+    div.querySelector(".quitar-item").addEventListener("click", function(){ div.remove(); renumerar(); actualizarEstado(); });
+    var inp = div.querySelector(".f-sku"), t = null;
+    function verificar(){ var k = normSku(inp.value); if (!k) { pintarSku(div); return; } pintarSku(div); consultarSkus([k]).then(function(){ pintarSku(div); }); }
+    inp.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(verificar, 500); });
+    inp.addEventListener("blur", verificar);
+    div.querySelector(".f-cantidad").addEventListener("input", actualizarEstado);
+    if (skuInicial){ inp.value = skuInicial; div.querySelector(".f-cantidad").value = "1"; }
 
     contItems.appendChild(div);
     renumerar();
+    if (skuInicial) verificar();
     return div;
   }
 
@@ -334,65 +535,137 @@
     }
   }
 
-  crearItem(productoURL);
+  // Lee las filas: válidas (SKU encontrado + cantidad), con problemas, y vacías
+  function leerItems(){
+    var out = {ok:[], malos:[], incompletos:0};
+    var items = contItems.querySelectorAll(".item");
+    for (var i = 0; i < items.length; i++){
+      var k = normSku(items[i].querySelector(".f-sku").value);
+      var cant = items[i].querySelector(".f-cantidad").value.trim();
+      if (!k && !cant) continue;
+      var n = parseInt(cant, 10);
+      if (!k || !/^\d+$/.test(cant) || n < 1) { out.incompletos++; continue; }
+      if (cacheSku[k]) out.ok.push({sku:k, cant:n, nombre:cacheSku[k].nombre});
+      else out.malos.push({sku:k, cant:n});
+    }
+    return out;
+  }
 
-  document.getElementById("agregar-item").addEventListener("click", function(){
-    var nuevo = crearItem("");
-    nuevo.querySelector(".f-tipo").focus();
-  });
+  function modoEnvio(){
+    var it = leerItems();
+    var desc = $("descripcion").value.trim();
+    if (it.ok.length && !it.malos.length && !it.incompletos && !desc) return "auto";
+    if (it.ok.length || it.malos.length || desc) return "manual";
+    return "vacio";
+  }
 
-  var form = document.getElementById("form-cotizacion");
-  var aviso = document.getElementById("aviso-error");
+  function actualizarEstado(){
+    var m = modoEnvio(), box = $("estado-envio"), btn = $("btn-enviar");
+    $("desc-ayuda").textContent = leerItems().ok.length ? "(opcional)" : "(obligatorio si no indicaste ningún SKU)";
+    if (m === "auto"){
+      box.className = "estado-envio auto";
+      box.innerHTML = "<strong>Cotización automática.</strong> Todos los SKU están verificados: al enviar, la cotización se genera y te llega por WhatsApp.";
+      btn.textContent = "💬 Enviar y recibir mi cotización";
+    } else if (m === "manual"){
+      box.className = "estado-envio manual";
+      box.innerHTML = "<strong>Revisión por un asesor.</strong> " + ($("descripcion").value.trim() ? "Como incluiste una descripción" : "Como hay productos sin SKU verificado") + ", un asesor tomará tus datos y te enviará la cotización. Para que sea automática, deja solo SKU verificados y cantidades.";
+      btn.textContent = "💬 Enviar solicitud por WhatsApp";
+    } else {
+      box.className = "estado-envio"; box.innerHTML = "";
+      btn.textContent = "💬 Enviar solicitud por WhatsApp";
+    }
+  }
+  $("descripcion").addEventListener("input", actualizarEstado);
+
+  crearItem(skuURL);
+  $("agregar-item").addEventListener("click", function(){ var nuevo = crearItem(""); nuevo.querySelector(".f-sku").focus(); });
+
+  function aplicarRetiro(){
+    var retiro = /^Retiro en tienda/.test(regionSel.value);
+    $("campo-direccion").hidden = retiro;
+  }
+  regionSel.addEventListener("change", aplicarRetiro);
+  aplicarRetiro();
+
+  var form = $("form-cotizacion");
+  var aviso = $("aviso-error");
 
   form.addEventListener("submit", function(ev){
     ev.preventDefault();
 
-    var nombre  = document.getElementById("nombre").value.trim();
-    var empresa = document.getElementById("empresa").value.trim();
-    var region  = document.getElementById("region").value;
-    var correo  = document.getElementById("correo").value.trim();
-    var uso     = document.getElementById("uso").value.trim();
+    // Si hay SKU todavía sin verificar, se consultan antes de decidir el destino
+    var pend = [];
+    contItems.querySelectorAll(".f-sku").forEach(function(i){ var k = normSku(i.value); if (k && !(k in cacheSku)) { delete sinVerificar[k]; pend.push(k); } });
+    consultarSkus(pend).then(function(){
+      contItems.querySelectorAll(".item").forEach(pintarSku);
+      enviar();
+    });
+  });
 
-    var items = contItems.querySelectorAll(".item");
-    var lineasItems = [];
-    var itemsValidos = true;
+  function enviar(){
+    var tipoCli = tipoCliente();
+    var nombre  = $("nombre").value.trim();
+    var rut     = $("rut").value.trim();
+    var empresa = $("empresa").value.trim();
+    var giro    = $("giro").value.trim();
+    var telefono= $("telefono").value.trim();
+    var correo  = $("correo").value.trim();
+    var region  = regionSel.value;
+    var retiro  = /^Retiro en tienda/.test(region);
+    var comuna  = comunaSel.value;
+    var direccion = $("direccion").value.trim();
+    var desc    = $("descripcion").value.trim();
+    var it = leerItems();
 
-    for (var i = 0; i < items.length; i++){
-      var tipo     = items[i].querySelector(".f-tipo").value;
-      var modelo   = items[i].querySelector(".f-modelo").value.trim();
-      var cantidad = items[i].querySelector(".f-cantidad").value.trim();
+    // Validación en el mismo orden en que aparecen los campos
+    var faltan = [];
+    if (it.incompletos) faltan.push("SKU y cantidad (número) en cada producto");
+    if (!it.ok.length && !it.malos.length && !desc) faltan.push("al menos un SKU con su cantidad, o la descripción de lo que necesitas");
+    if (!nombre) faltan.push("nombre y apellido");
+    if (!rut) faltan.push("RUT");
+    else if (!rutValido(rut)) { faltan.push("un RUT válido"); marcar("rut", "rut-error", "El RUT no es válido. Revisa el número y el dígito verificador."); }
+    if (tipoCli === "empresa"){ if (!empresa) faltan.push("razón social"); if (!giro) faltan.push("giro"); }
+    if (!telefono) faltan.push("teléfono");
+    else if (!telValido(telefono)) { faltan.push("un teléfono de 9 dígitos"); marcar("telefono", "tel-error", "Ingresa 9 dígitos, por ejemplo 9 1234 5678."); }
+    if (!region) faltan.push("región");
+    if (!retiro && !comuna) faltan.push("comuna");
+    if (!retiro && !direccion) faltan.push("dirección de despacho");
 
-      if (!tipo || !cantidad){ itemsValidos = false; break; }
-
-      var linea = "*Producto " + (i + 1) + ":* " + tipo;
-      if (modelo) linea += " — " + modelo;
-      linea += " — Cantidad: " + cantidad;
-      lineasItems.push(linea);
-    }
-
-    if (!nombre || !region || !itemsValidos || lineasItems.length === 0){
+    if (faltan.length){
+      $("aviso-texto").innerHTML = "Para enviar tu solicitud falta completar: <strong>" + faltan.join(", ") + "</strong>.";
       aviso.classList.add("visible");
       aviso.scrollIntoView({behavior:"smooth", block:"center"});
       return;
     }
     aviso.classList.remove("visible");
 
+    var auto = modoEnvio() === "auto";
     var lineas = [];
+    if (auto){
+      lineas.push("Hola, quiero una cotización formal de estos productos.");
+      lineas.push("");
+    }
     lineas.push("*SOLICITUD DE COTIZACIÓN* — cotizaciones.chilemaquina.pro");
     lineas.push("");
+    for (var i = 0; i < it.ok.length; i++) lineas.push("*SKU " + it.ok[i].sku + "* — Cantidad: " + it.ok[i].cant + " — " + it.ok[i].nombre);
+    for (var j = 0; j < it.malos.length; j++) lineas.push("*SKU " + it.malos[j].sku + "* (" + (cacheSku[it.malos[j].sku] === null ? "no encontrado en la tienda" : "sin verificar") + ") — Cantidad: " + it.malos[j].cant);
+    if (it.ok.length || it.malos.length) lineas.push("");
+    lineas.push("*Tipo de cliente:* " + (tipoCli === "empresa" ? "Empresa" : "Persona"));
     lineas.push("*Nombre:* " + nombre);
-    if (empresa) lineas.push("*Empresa/taller:* " + empresa);
-    lineas.push("*Región:* " + region);
+    lineas.push("*RUT:* " + formatoRut(rut));
+    if (tipoCli === "empresa"){ lineas.push("*Razón social:* " + empresa); lineas.push("*Giro:* " + giro); }
+    else lineas.push("*Giro:* Particular");
+    lineas.push("*Teléfono:* " + telFormato(telefono));
     if (correo) lineas.push("*Correo:* " + correo);
+    lineas.push("*Región:* " + region);
+    if (!retiro){ lineas.push("*Comuna:* " + comuna); lineas.push("*Dirección:* " + direccion); }
+    if (desc){ lineas.push(""); lineas.push("*Lo que necesita:* " + desc); }
     lineas.push("");
-    for (var j = 0; j < lineasItems.length; j++) lineas.push(lineasItems[j]);
-    lineas.push("");
-    if (uso) lineas.push("*Uso previsto:* " + uso);
-    lineas.push("*Origen:* " + ORIGEN);
+    lineas.push("*Origen:* " + ORIGEN + (auto ? " · automática" : " · asesor"));
 
-    var url = "https://wa.me/" + NUMERO_WSP + "?text=" + encodeURIComponent(lineas.join("\n"));
+    var url = "https://wa.me/" + (auto ? WSP_AUTO : WSP_ASESOR) + "?text=" + encodeURIComponent(lineas.join("\n"));
     window.open(url, "_blank", "noopener");
-  });
+  }
 })();
 </script>
 
