@@ -1,0 +1,14 @@
+# Cotizaciones ChileMáquina
+
+> Formulario para cotizar máquinas de coser industriales y domésticas, overlock, collereteras, bordadoras, cortadoras, planchado, repuestos e insumos de ChileMáquina (chilemaquina.pro), tienda chilena con 35 años de experiencia y despacho a todo Chile.
+
+## Cómo cotizar
+- Ingresa el SKU que aparece bajo el nombre de cada producto en https://chilemaquina.pro y la cantidad; la solicitud se envía por WhatsApp y la cotización se responde por ese mismo medio.
+- Si no sabes el SKU, búscalo en la tienda o en el catálogo técnico.
+
+## Enlaces
+- [Tienda ChileMáquina](https://chilemaquina.pro): precios y compra en línea.
+- [Catálogo técnico](https://catalogo.chilemaquina.pro): folletos y fichas técnicas por SKU.
+- [Tutoriales de confección](https://tutoriales-confeccion.chilemaquina.pro): videos y PDF paso a paso.
+- [Blog](https://chilemaquina.pro/blog): guías técnicas.
+- WhatsApp de ventas y asesoría: +56 9 4549 4865
